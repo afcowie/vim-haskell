@@ -59,8 +59,7 @@ sy match   hsCharacter		"[^a-zA-Z0-9_']'\([^\\]\|\\[^']\+\|\\'\)'"lc=1 contains=
 sy match   hsCharacter		"^'\([^\\]\|\\[^']\+\|\\'\)'" contains=hsSpecialChar,hsSpecialCharError
 
 " (Qualified) identifiers (no default highlighting)
-syn match ConId "\(\<[A-Z][a-zA-Z0-9_']*\.\)\=\<[A-Z][a-zA-Z0-9_']*\>"
-syn match VarId "\(\<[A-Z][a-zA-Z0-9_']*\.\)\=\<[a-z][a-zA-Z0-9_']*\>"
+syn match VarId "\(\<[A-Z][a-zA-Z0-9_']*\.\)\=[a-z][a-zA-Z0-9_']*"
 
 " Infix operators--most punctuation characters and any (qualified) identifier
 " enclosed in `backquotes`. An operator starting with : is a constructor,
@@ -69,6 +68,9 @@ syn match hsVarSym "\(\<[A-Z][a-zA-Z0-9_']*\.\)\=[-!#$%&\*\+/<=>\?@\\^|~.][-!#$%
 syn match hsConSym "\(\<[A-Z][a-zA-Z0-9_']*\.\)\=:[-!#$%&\*\+./<=>\?@\\^|~:]*"
 syn match hsVarSym "`\(\<[A-Z][a-zA-Z0-9_']*\.\)\=[a-z][a-zA-Z0-9_']*`"
 syn match hsConSym "`\(\<[A-Z][a-zA-Z0-9_']*\.\)\=[A-Z][a-zA-Z0-9_']*`"
+
+" Compose is an operator
+syn match hsVarSym " \. "
 
 " Toplevel Template Haskell support
 "sy match hsTHTopLevel "^[a-z]\(\(.\&[^=]\)\|\(\n[^a-zA-Z0-9]\)\)*"
@@ -113,11 +115,11 @@ sy keyword hsInfix infix infixl infixr
 sy keyword hsStatement  do case of let in
 sy keyword hsConditional if then else
 
-"if exists("hs_highlight_types")
-  " Primitive types from the standard prelude and libraries.
-  sy match hsType "\<[A-Z]\(\S\&[^,.]\)*\>"
-  sy match hsType "()"
-"endif
+" Primitive types from the standard prelude and libraries.
+" Quaified types are still types. There's a bug here; having sorted that out,
+" now "Int64" mis-parses, so FIXME
+sy match hsType "\<\([A-Z][a-zA-Z0-9_']*\.\)*[A-Z]\([a-zA-Z0-9_']\&[^,.]\)*\>[0-9]*"
+sy match hsType "()"
 
 " Not real keywords, but close.
 if exists("hs_highlight_boolean")
@@ -147,6 +149,7 @@ sy match hsImportParams "hiding" contained
 sy region hsImportParams start="(" end=")" contained
     \ contains=hsBlockComment,hsLineComment, hsType,hsDelimTypeExport,hs_hlFunctionName,hs_OpFunctionName
     \ nextgroup=hsImportIllegal skipwhite
+sy match hsImportParams "()" contained
 
 " hi hsImport guibg=red
 "hi hsImportParams guibg=bg
@@ -292,6 +295,7 @@ if version >= 508 || !exists("did_hs_syntax_inits")
   HiLink hsPackageString    hsString
 
   HiLink hsOperator         Operator
+  HiLink VarId              Normal
 
   HiLink hsInfix            Keyword
   HiLink hsStructure        Structure
