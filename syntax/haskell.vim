@@ -109,10 +109,11 @@ sy match hs_DeclareFunction "^[a-z_(]\S*\(\s\|\n\)*::" contains=hs_FunctionName,
 " hi hs_DeclareFunction guibg=red
 
 sy keyword hsStructure data family class where instance default deriving
+sy keyword hsStructure let in
 sy keyword hsTypedef type newtype
 
 sy keyword hsInfix infix infixl infixr
-sy keyword hsStatement  do case of let in
+sy keyword hsStatement  do case of
 sy keyword hsConditional if then else
 
 " Primitive types from the standard prelude and libraries.
